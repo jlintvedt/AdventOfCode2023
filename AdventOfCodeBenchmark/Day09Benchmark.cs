@@ -7,14 +7,15 @@ namespace AdventOfCodeBenchmark
     public class Day09Benchmark
     {
         string input;
+        readonly int day = 09;
 
-        [Params(10000)]
+        [Params(100000)]
         public int N;
 
         [GlobalSetup]
         public void Setup()
         {
-            input = InputProvider.GetInput(2023, 9);
+            input = InputProvider.GetInput(AdventOfCode.Const.Year, day);
         }
 
         [Benchmark]

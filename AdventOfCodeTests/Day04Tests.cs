@@ -1,4 +1,3 @@
-using System;
 using AdventOfCodeTests.InputHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,28 +8,20 @@ namespace AdventOfCodeTests
     public class Day04Tests
     {
         private string input_puzzle;
-        private string input_example1;
-        private string input_example2;
+        private readonly int day = 04;
 
         [TestInitialize]
         public void LoadInput()
         {
-            input_puzzle = InputProvider.GetInput(2023, 04);
-            input_example1 = string.Format("example{0}1", Environment.NewLine);
-            input_example2 = string.Format("example{0}2", Environment.NewLine);
-        }
-
-        [TestMethod]
-        public void Begin_WarmUp()
-        {
-            // Force performing LoadInput() warm-up as part of this test
+            // Load input
+            input_puzzle = InputProvider.GetInput(AdventOfCode.Const.Year, day);
         }
 
         [TestMethod]
         public void Example_Puzzle1()
         {
             // Act
-            var result = AdventOfCode.Day04.Puzzle1(input_example1);
+            var result = AdventOfCode.Day04.Puzzle1(InputProvider.GetExample(AdventOfCode.Const.Year, day, exampleNum: 1));
 
             // Assert
             Assert.AreEqual($"Puzzle1", result);
@@ -50,7 +41,7 @@ namespace AdventOfCodeTests
         public void Example_Puzzle2()
         {
             // Act
-            var result = AdventOfCode.Day04.Puzzle2(input_example2);
+            var result = AdventOfCode.Day04.Puzzle2(InputProvider.GetExample(AdventOfCode.Const.Year, day, exampleNum: 1));
 
             // Assert
             Assert.AreEqual($"Puzzle2", result);

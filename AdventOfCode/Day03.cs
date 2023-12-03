@@ -60,6 +60,36 @@ namespace AdventOfCode
                 return sum;
             }
 
+            public int FindSumOfGearRatios()
+            {
+                var sum = 0;
+                foreach (var symbol in Symbols)
+                {
+                    if (symbol.Type != '*')
+                        continue;
+
+                    var adjecentParts = new HashSet<Part>();
+                    foreach (var offset in Offsets)
+                    {
+                        if (Parts.TryGetValue((symbol.Pos.x + offset.x, symbol.Pos.y + offset.y), out Part part))
+                            adjecentParts.Add(part);
+                    }
+
+                    // Check if gear is valid
+                    if (adjecentParts.Count == 2)
+                    {
+                        var gearRatio = 1;
+                        foreach (var part in adjecentParts)
+                        {
+                            gearRatio *= part.Number;
+                        }
+                        sum += gearRatio;
+                    }
+                }
+
+                return sum;
+            }
+
             private Part ExtractPart(string line, int index)
             {
                 var number = 0;
@@ -106,11 +136,6 @@ namespace AdventOfCode
                     alreadyUsed = true;
                     return Number;
                 }
-
-                public override string ToString()
-                {
-                    return $"{Number} | {alreadyUsed}";
-                }
             }
         }
 
@@ -124,7 +149,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var gr = new GearRatios(input);
+            return gr.FindSumOfGearRatios().ToString();
         }
     }
 }

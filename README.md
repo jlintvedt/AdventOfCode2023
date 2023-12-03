@@ -11,6 +11,8 @@ Run without debugger: `ctrl+f5` in VS Code. This stores the benchmark in [result
 |--------------------------------|---------|-------------------------:|----------------------:|
 | [Day01](AdventOfCode/Day01.cs) | Puzzle1 |                      1ms |                  98μs |
 |                                | Puzzle2 |                      1ms |                 162μs |
+| [Day02](AdventOfCode/Day02.cs) | Puzzle1 |                      1ms |                 185μs |
+|                                | Puzzle2 |                      1ms |                 183μs |
 <!--ResultTableEnd-->
 
 1) Laptop Intel i9-11950H @ 2.6GHz. Visual Studio Test Explorer

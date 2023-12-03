@@ -10,16 +10,18 @@ namespace AdventOfCode
         public class CalibrationDocument
         {
             private readonly string[] lines;
+            private bool searchNumberAsString = false;
+            private readonly string[] numString = new string[9] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 
             public CalibrationDocument(string input)
             {
                 lines = input.Split(Environment.NewLine);
             }
 
-            public int FindSumOfCalibrationValues()
+            public int FindSumOfCalibrationValues(bool searchNumberAsString = false)
             {
+                this.searchNumberAsString = searchNumberAsString;
                 var sum = 0;
-
                 for (int i = 0; i < lines.Length; i++)
                 {
                     sum += GetCalibrationValue(lines[i]);
@@ -36,14 +38,13 @@ namespace AdventOfCode
 
                 for (int i = 0; searchFirst || searchLast; i++)
                 {
-                    // Check in char is ASCII value 0-9
                     if (searchFirst && TryGetNumber(line, i, out int v))
                     {
                         searchFirst = false;
                         value += v * 10;
                     }
 
-                    if (searchLast && TryGetNumber(line, line.Length - 1 - i, out v))
+                    if (searchLast && TryGetNumber(line, line.Length - 1 - i, out v, leftToRight: false))
                     {
                         searchLast = false;
                         value += v;
@@ -53,10 +54,49 @@ namespace AdventOfCode
                 return value;
             }
 
-            private bool TryGetNumber(string str, int index, out int number)
+            private bool TryGetNumber(string str, int index, out int number, bool leftToRight = true)
             {
                 number = str[index] - 48;
-                return number >= 0 && number < 10;
+                if (number >= 0 && number < 10)
+                    return true;
+
+                if (searchNumberAsString)
+                    return TryGetNumberAsString(str, index, out number, leftToRight);
+
+                return false;
+            }
+
+            private bool TryGetNumberAsString(string str, int index, out int number, bool leftToRight = true)
+            {
+                number = 0;
+                var increment = leftToRight ? 1 : -1;
+
+                // Iterate over string rep. of numbers
+                for (int j = 0; j < numString.Length; j++)
+                {
+                    var numStr = numString[j];
+                    var match = true;
+                    int i;
+
+                    // Chack if number is present as string
+                    for (i = 0; i < numStr.Length; i++)
+                    {
+                        var numStrIndex = leftToRight ? i : numStr.Length - i - 1;
+                        if (str[index + i*increment] != numStr[numStrIndex])
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+
+                    if (match)
+                    {
+                        number = j + 1;
+                        return true;
+                    }
+                }
+
+                return false;
             }
         }
 
@@ -70,7 +110,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var cd = new CalibrationDocument(input);
+            return cd.FindSumOfCalibrationValues(searchNumberAsString: true).ToString();
         }
     }
 }

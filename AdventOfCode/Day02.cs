@@ -30,10 +30,17 @@ namespace AdventOfCode
                 foreach (var game in Games)
                 {
                     if (game.IsPossible(maxRed, maxGreen, maxBlue))
-                    {
                         sum += game.Id;
-                    }
                 }
+
+                return sum;
+            }
+
+            public int FindSumOfPowerOfSets()
+            {
+                var sum = 0;
+                foreach (var game in Games)
+                    sum += game.FindPowerOfSet();
 
                 return sum;
             }
@@ -41,16 +48,14 @@ namespace AdventOfCode
             public class Game
             {
                 public readonly int Id;
-                private List<Reveal> Reveals = new List<Reveal>();
+                private readonly List<Reveal> Reveals = new List<Reveal>();
 
                 public Game(string input)
                 {
                     var comp = input.Split(':');
                     Id = int.Parse(comp[0][5..]);
                     foreach (var rev in comp[1].Split(';'))
-                    {
                         Reveals.Add(new Reveal(rev));
-                    }
                 }
 
                 public bool IsPossible(int maxRed, int maxGreen, int maxBlue)
@@ -58,12 +63,23 @@ namespace AdventOfCode
                     foreach (var reveal in Reveals)
                     {
                         if (reveal.Red > maxRed || reveal.Green > maxGreen || reveal.Blue > maxBlue)
-                        {
                             return false;
-                        }
                     }
 
                     return true;
+                }
+
+                public int FindPowerOfSet()
+                {
+                    int red = 0, green = 0, blue = 0;
+                    foreach (var reveal in Reveals)
+                    {
+                        red = reveal.Red > red ? reveal.Red : red;
+                        green = reveal.Green > green ? reveal.Green : green;
+                        blue = reveal.Blue > blue ? reveal.Blue : blue;
+                    }
+
+                    return red * green * blue;
                 }
             }
 
@@ -108,7 +124,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var cc = new CubeConundrum(input);
+            return cc.FindSumOfPowerOfSets().ToString();
         }
     }
 }

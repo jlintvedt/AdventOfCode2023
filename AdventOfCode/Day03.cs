@@ -33,14 +33,10 @@ namespace AdventOfCode
                                 Parts.Add((++x, y), Part);
                             if (Part.Number >= 100)
                                 Parts.Add((++x, y), Part);
-                            if (Part.Number >= 1000)
-                                Parts.Add((++x, y), Part);
                         }
                         // Symbol
                         else if (c != '.')
-                        {
                             Symbols.Add(new Symbol(c, (x, y)));
-                        }
                     }
                 }
             }
@@ -49,13 +45,9 @@ namespace AdventOfCode
             {
                 var sum = 0;
                 foreach (var symbol in Symbols)
-                {
                     foreach (var offset in Offsets)
-                    {
                         if (Parts.TryGetValue((symbol.Pos.x + offset.x, symbol.Pos.y + offset.y), out Part part))
-                            sum += part.GetNumber();
-                    }
-                }
+                            sum += part.GetNumberOnce();
 
                 return sum;
             }
@@ -70,19 +62,15 @@ namespace AdventOfCode
 
                     var adjecentParts = new HashSet<Part>();
                     foreach (var offset in Offsets)
-                    {
                         if (Parts.TryGetValue((symbol.Pos.x + offset.x, symbol.Pos.y + offset.y), out Part part))
                             adjecentParts.Add(part);
-                    }
 
                     // Check if gear is valid
                     if (adjecentParts.Count == 2)
                     {
                         var gearRatio = 1;
                         foreach (var part in adjecentParts)
-                        {
                             gearRatio *= part.Number;
-                        }
                         sum += gearRatio;
                     }
                 }
@@ -120,15 +108,15 @@ namespace AdventOfCode
 
             public class Part
             {
-                public int Number;
+                public readonly int Number;
                 private bool alreadyUsed = false;
 
                 public Part(int number)
                 {
-                    Number = number;
+                    this.Number = number;
                 }
 
-                public int GetNumber()
+                public int GetNumberOnce()
                 {
                     if (alreadyUsed)
                         return 0;

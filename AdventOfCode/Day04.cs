@@ -24,18 +24,33 @@ namespace AdventOfCode
             {
                 var sum = 0;
                 foreach (var card in Cards)
-                {
                     sum += card.GetScore();
-                }
 
                 return sum;
+            }
+
+            public int FindTotalNumberOfScratchcards()
+            {
+                var totalNum = 0;
+                for (int i = 0; i < Cards.Count; i++)
+                {
+                    var card = Cards[i];
+                    totalNum += card.Count;
+                    var num = card.GetNumWinningNumbers();
+                    for (int j = 1; j <= num; j++)
+                        Cards[i + j].Count += card.Count; // Potential ArgumentOutOfRangeException
+                }
+
+                return totalNum;
             }
 
             public class Scratchcard
             {
                 public HashSet<int> WinningNumbers = new HashSet<int>();
                 public List<int> Numbers = new List<int>();
+                public int Count = 1;
                 private int score;
+                private int numMatches;
 
                 public Scratchcard(string input)
                 {
@@ -55,6 +70,15 @@ namespace AdventOfCode
 
                     return score;
                 }
+
+                public int GetNumWinningNumbers()
+                {
+                    foreach (var num in Numbers)
+                        if (WinningNumbers.Contains(num))
+                            numMatches++;
+
+                    return numMatches;
+                }
             }
         }
 
@@ -68,7 +92,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var sc = new ScratchcardScoring(input);
+            return sc.FindTotalNumberOfScratchcards().ToString();
         }
     }
 }

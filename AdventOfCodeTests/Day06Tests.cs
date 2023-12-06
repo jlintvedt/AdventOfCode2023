@@ -43,7 +43,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day06.Puzzle2(InputProvider.GetExample(AdventOfCode.Const.Year, day, exampleNum: 1));
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"71503", result);
         }
 
         [TestMethod]
@@ -53,7 +53,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day06.Puzzle2(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"28545089", result);
         }
     }
 }

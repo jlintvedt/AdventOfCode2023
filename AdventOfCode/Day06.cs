@@ -10,7 +10,8 @@ namespace AdventOfCode
     {
         public class BoatRace
         {
-            public List<Race> Races = new List<Race>();
+            public readonly List<Race> Races = new List<Race>();
+            public readonly Race SingleRace;
 
             public BoatRace(string input)
             {
@@ -19,7 +20,9 @@ namespace AdventOfCode
                 var dist = comp[1].Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
                 for (int i = 1; i < time.Length; i++)
-                    Races.Add(new Race(int.Parse(time[i]), int.Parse(dist[i])));
+                    Races.Add(new Race(int.Parse(time[i]), long.Parse(dist[i])));
+
+                SingleRace = new Race(int.Parse(comp[0][9..].Replace(" ", "")), long.Parse(comp[1][9..].Replace(" ", "")));
             }
 
             public int FindProductOfWaysToWin()
@@ -30,12 +33,17 @@ namespace AdventOfCode
                 return sum;
             }
 
+            public int FindNumWaysToWinLongRace()
+            {
+                return SingleRace.GetNumPossibleWaysToWin();
+            }
+
             public class Race
             {
                 public readonly int TimeLimit;
-                public readonly int DistanceRecord;
+                public readonly long DistanceRecord;
 
-                public Race(int timeLimit, int distanceRecord)
+                public Race(int timeLimit, long distanceRecord)
                 {
                     this.TimeLimit = timeLimit;
                     this.DistanceRecord = distanceRecord;
@@ -44,30 +52,28 @@ namespace AdventOfCode
                 public int GetNumPossibleWaysToWin()
                 {
                     var mid = TimeLimit / 2;
-                    var wins = 0;
+                    int wins = 0;
+
                     for (int i = mid + 1; i < TimeLimit; i++)
-                    {
-                        var remTime = TimeLimit - i;
-                        var speed = TimeLimit - remTime;
-                        var dist = speed * remTime;
-                        if (dist > DistanceRecord)
+                        if (GetDistance(i) > DistanceRecord)
                             wins++;
                         else
                             break;
-                    }
 
                     for (int i = mid; i > 0; i--)
-                    {
-                        var remTime = TimeLimit - i;
-                        var speed = TimeLimit - remTime;
-                        var dist = speed * remTime;
-                        if (dist > DistanceRecord)
+                        if (GetDistance(i) > DistanceRecord)
                             wins++;
                         else
                             break;
-                    }
 
                     return wins;
+                }
+
+                private long GetDistance(int secondsHeld)
+                {
+                    int remTime = TimeLimit - secondsHeld;
+                    long speed = TimeLimit - remTime;
+                    return speed * remTime;
                 }
             }
         }
@@ -82,7 +88,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+            var br = new BoatRace(input);
+            return br.FindNumWaysToWinLongRace().ToString();
         }
     }
 }

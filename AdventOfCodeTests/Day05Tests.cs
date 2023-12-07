@@ -46,7 +46,7 @@ namespace AdventOfCodeTests
             Assert.AreEqual($"46", result);
         }
 
-        [Ignore]
+        [Ignore] // Needs better solution: 33m
         [TestMethod]
         public void Puzzle2()
         {
@@ -54,7 +54,7 @@ namespace AdventOfCodeTests
             var result = AdventOfCode.Day05.Puzzle2(input_puzzle);
 
             // Assert
-            Assert.AreEqual($"Puzzle2", result);
+            Assert.AreEqual($"51399228", result);
         }
     }
 }

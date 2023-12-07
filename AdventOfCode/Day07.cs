@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
 
 namespace AdventOfCode
 {
@@ -42,7 +41,7 @@ namespace AdventOfCode
             public CardHand(string input, bool jokers = false)
             {
                 var comp = input.Split(' ');
-                cardString = comp[0];
+                var cardString = comp[0];
                 Bid = int.Parse(comp[1]);
 
                 for (int i = 0; i < 5; i++)
@@ -52,13 +51,13 @@ namespace AdventOfCode
                         'A' => 14,
                         'K' => 13,
                         'Q' => 12,
-                        'J' => 11,
+                        'J' => jokers ? 1 : 11,
                         'T' => 10,
                         _ => cardString[i] - 48,
                     };
                 }
 
-                Type = FindHandType(jokers);
+                Type = FindHandType();
                 if (jokers)
                     Type = RecaulculateHandUsingJokers();
             }
@@ -75,26 +74,17 @@ namespace AdventOfCode
                 return 0;
             }
 
-            public override string ToString()
-            {
-                return $"{cardString} {Type}";
-            }
-
-            private HandType FindHandType(bool jokers = false)
+            private HandType FindHandType()
             {
                 var numCards = new int[15];
                 for (int i = 0; i < 5; i++)
                     numCards[Cards[i]]++;
+                numJokers = numCards[1];
 
-                if (jokers)
-                {
-                    numJokers = numCards[11];
-                    numCards[11] = 0;
-                }
-
+                // Analyze cards
                 var hasPair = false;
                 var most = 0;
-                for (int i = 0; i < 15; i++)
+                for (int i = 2; i < 15; i++) // Skip i=1 (jokers)
                 {
                     // First pair stored in bool
                     if (!hasPair && numCards[i] == 2)
@@ -103,6 +93,7 @@ namespace AdventOfCode
                         most = numCards[i] > most ? numCards[i] : most;
                 }
 
+                // Find hand type
                 return most switch
                 {
                     5 => HandType.FiveOfAKind,
@@ -118,40 +109,15 @@ namespace AdventOfCode
                 if (numJokers == 0)
                     return Type;
 
-                // Set joker to lowest value
-                for (int i = 0; i<Cards.Length; i++)
-                    if (Cards[i] == 11)
-                        Cards[i] = 1;
-
-                // Recalculate Type using jokers
-                switch (Type)
+                return Type switch
                 {
-                    case HandType.HighCard:
-                        return numJokers switch
-                        {
-                            1 => HandType.OnePair,
-                            2 => HandType.ThreeOfAKind,
-                            3 => HandType.FourOfAKind,
-                            _ => HandType.FiveOfAKind,
-                        };
-                    case HandType.OnePair:
-                        return numJokers switch
-                        {
-                            1 => HandType.ThreeOfAKind,
-                            2 => HandType.FourOfAKind,
-                            3 => HandType.FiveOfAKind,
-                        };
-                    case HandType.TwoPairs:
-                        return HandType.FullHouse;
-                    case HandType.ThreeOfAKind:
-                        return numJokers == 2 ? HandType.FiveOfAKind : HandType.FourOfAKind;
-                    case HandType.FourOfAKind:
-                        return HandType.FiveOfAKind;
-                    default:
-                        break;
-                }
-
-                return Type;
+                    HandType.HighCard => numJokers switch { 1 => HandType.OnePair, 2 => HandType.ThreeOfAKind, 3 => HandType.FourOfAKind, _ => HandType.FiveOfAKind },
+                    HandType.OnePair => numJokers switch { 1 => HandType.ThreeOfAKind, 2 => HandType.FourOfAKind, _ => HandType.FiveOfAKind },
+                    HandType.TwoPairs => HandType.FullHouse,
+                    HandType.ThreeOfAKind => numJokers == 2 ? HandType.FiveOfAKind : HandType.FourOfAKind,
+                    HandType.FourOfAKind => HandType.FiveOfAKind,
+                    _ => Type
+                };
             }
 
             public enum HandType

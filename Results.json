@@ -1,5 +1,5 @@
 {
-  "CoreClockSpeed": "3.8GHz",
+  "CoreClockSpeed": "2.6GHz",
   "Days": [
     {
       "Day": "01",
@@ -33,22 +33,22 @@
       "Day": "05",
       "Puzzle1_TestTime": "<1ms",
       "Puzzle2_TestTime": "33m",
-      "Puzzle1_BenchmarkTime": "",
-      "Puzzle2_BenchmarkTime": ""
+      "Puzzle1_BenchmarkTime": "56μs",
+      "Puzzle2_BenchmarkTime": "N/A"
     },
     {
       "Day": "06",
       "Puzzle1_TestTime": "<1ms",
       "Puzzle2_TestTime": "114ms",
-      "Puzzle1_BenchmarkTime": "",
-      "Puzzle2_BenchmarkTime": ""
+      "Puzzle1_BenchmarkTime": "1μs",
+      "Puzzle2_BenchmarkTime": "23ms"
     },
     {
       "Day": "07",
       "Puzzle1_TestTime": "1ms",
       "Puzzle2_TestTime": "1ms",
-      "Puzzle1_BenchmarkTime": "",
-      "Puzzle2_BenchmarkTime": ""
+      "Puzzle1_BenchmarkTime": "313μs",
+      "Puzzle2_BenchmarkTime": "312μs"
     },
     {
       "Day": "08",

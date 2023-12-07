@@ -21,7 +21,7 @@ namespace AdventOfCodeBenchmark
         [Benchmark]
         public string D05_P1() => Day05.Puzzle1(input);
 
-        [Benchmark]
-        public string D05_P2() => Day05.Puzzle2(input);
+        // [Benchmark]
+        // public string D05_P2() => Day05.Puzzle2(input);
     }
 }

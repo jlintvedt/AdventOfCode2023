@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 
 namespace AdventOfCode
 {
@@ -13,10 +14,10 @@ namespace AdventOfCode
         {
             public List<CardHand> Hands = new List<CardHand> ();
 
-            public CamelCards(string input)
+            public CamelCards(string input, bool jokers = false)
             {
                 foreach (var line in input.Split(Environment.NewLine))
-                    Hands.Add(new CardHand(line));
+                    Hands.Add(new CardHand(line, jokers));
             }
 
             public int FindTotalWinnings()
@@ -35,27 +36,31 @@ namespace AdventOfCode
             public int[] Cards = new int[5];
             public int Bid;
             public HandType Type;
+            private int numJokers;
+            private string cardString;
 
-            public CardHand(string input)
+            public CardHand(string input, bool jokers = false)
             {
                 var comp = input.Split(' ');
-                var cards = comp[0];
+                cardString = comp[0];
                 Bid = int.Parse(comp[1]);
 
                 for (int i = 0; i < 5; i++)
                 {
-                    Cards[i] = cards[i] switch
+                    Cards[i] = cardString[i] switch
                     {
                         'A' => 14,
                         'K' => 13,
                         'Q' => 12,
                         'J' => 11,
                         'T' => 10,
-                        _ => cards[i] - 48,
+                        _ => cardString[i] - 48,
                     };
                 }
 
-                Type = FindHandType();
+                Type = FindHandType(jokers);
+                if (jokers)
+                    Type = RecaulculateHandUsingJokers();
             }
 
             public int CompareTo(CardHand other)
@@ -70,11 +75,22 @@ namespace AdventOfCode
                 return 0;
             }
 
-            private HandType FindHandType()
+            public override string ToString()
+            {
+                return $"{cardString} {Type}";
+            }
+
+            private HandType FindHandType(bool jokers = false)
             {
                 var numCards = new int[15];
                 for (int i = 0; i < 5; i++)
                     numCards[Cards[i]]++;
+
+                if (jokers)
+                {
+                    numJokers = numCards[11];
+                    numCards[11] = 0;
+                }
 
                 var hasPair = false;
                 var most = 0;
@@ -97,6 +113,46 @@ namespace AdventOfCode
                 };
             }
 
+            private HandType RecaulculateHandUsingJokers()
+            {
+                if (numJokers == 0)
+                    return Type;
+
+                // Set joker to lowest value
+                for (int i = 0; i<Cards.Length; i++)
+                    if (Cards[i] == 11)
+                        Cards[i] = 1;
+
+                // Recalculate Type using jokers
+                switch (Type)
+                {
+                    case HandType.HighCard:
+                        return numJokers switch
+                        {
+                            1 => HandType.OnePair,
+                            2 => HandType.ThreeOfAKind,
+                            3 => HandType.FourOfAKind,
+                            _ => HandType.FiveOfAKind,
+                        };
+                    case HandType.OnePair:
+                        return numJokers switch
+                        {
+                            1 => HandType.ThreeOfAKind,
+                            2 => HandType.FourOfAKind,
+                            3 => HandType.FiveOfAKind,
+                        };
+                    case HandType.TwoPairs:
+                        return HandType.FullHouse;
+                    case HandType.ThreeOfAKind:
+                        return numJokers == 2 ? HandType.FiveOfAKind : HandType.FourOfAKind;
+                    case HandType.FourOfAKind:
+                        return HandType.FiveOfAKind;
+                    default:
+                        break;
+                }
+
+                return Type;
+            }
 
             public enum HandType
             {
@@ -120,7 +176,8 @@ namespace AdventOfCode
         // == == == == == Puzzle 2 == == == == ==
         public static string Puzzle2(string input)
         {
-            return "Puzzle2";
+        var cc = new CamelCards(input, jokers: true); ;
+            return cc.FindTotalWinnings().ToString();
         }
-    }
+}
 }
